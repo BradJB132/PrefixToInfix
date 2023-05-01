@@ -5,7 +5,7 @@ public class Convertor {
     private static Stack<String> operationStack;
     private static Stack<Integer> numberStack;
     private static Stack<String> infixOpStack;
-    private static Stack<Integer> infixNumStack;
+    private static Stack<String> infixNumStack;
     private static String[] express;
 
     private static String Evaluate(){
@@ -40,11 +40,29 @@ public class Convertor {
         return numberStack.pop().toString();
     }
 
-    private static String convInfix(){
+    private static String convInfix() {
         StringBuilder infix = new StringBuilder();
+        int currStack = 0;
 
-
-
+        for (String s : express) {
+            if (Character.isDigit(s.charAt(0))) {
+                infixNumStack.push(s);
+                currStack++;
+            } else {
+                infixOpStack.push(s);
+                currStack = 0;
+            }
+            while (currStack >= 2 && infixNumStack.size() >= 2 && !infixOpStack.isEmpty()) {
+                String temp2 = infixNumStack.pop();
+                String temp1 = infixNumStack.pop();
+                String charTemp = infixOpStack.pop();
+                String push = "(" + temp1 + " " + charTemp + " " + temp2 + ")";
+                infixNumStack.push(push);
+            }
+        }
+        infix.append(infixNumStack.pop());
+        infix.deleteCharAt(0);
+        infix.deleteCharAt(infix.length()-1);
         return infix.toString();
     }
     public static void prefixToInfix(String Expression){
@@ -58,8 +76,8 @@ public class Convertor {
 
         String eval = Evaluate();
         System.out.println(eval);
-        //String infix = convInfix();
+        String infix = convInfix();
 
-        //System.out.println(Expression + " -> " + infix + " = " + eval);
+        System.out.println(Expression + " -> " + infix + " = " + eval);
     }
 }
